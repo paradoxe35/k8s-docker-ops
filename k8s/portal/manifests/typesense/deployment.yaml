@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: typesense
+spec:
+  selector:
+    matchLabels:
+      app: typesense
+  replicas: 1
+  serviceName: "typesense"
+  # podManagementPolicy: "Parallel"
+  template:
+    metadata:
+      labels:
+        app: typesense
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: typesense
+          image: typesense/typesense:0.25.0
+          ports:
+            - containerPort: 8108
+              name: typesense
+          volumeMounts:
+            - name: typesense-data
+              mountPath: /data
+          resources:
+            limits:
+              cpu: "500m"
+              memory: 1Gi
+            requests:
+              cpu: "500m"
+              memory: 1Gi
+          envFrom:
+            - configMapRef:
+                name: typesense-config
+            - secretRef:
+                name: typesense-secrets
+      volumes:
+        - name: typesense-data
+          persistentVolumeClaim:
+            claimName: typesense-pvc

@@ -1,0 +1,47 @@
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: homelab-portal-web
+  namespace: flux-system
+spec:
+  image: registry-hub.homelab.net/homelab-projects/homelab-portal/web
+  interval: 5m0s
+  secretRef:
+    name: regcred
+
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: homelab-portal-docs
+  namespace: flux-system
+spec:
+  image: registry-hub.homelab.net/homelab-projects/homelab-portal/docs
+  interval: 5m0s
+  secretRef:
+    name: regcred
+
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: homelab-portal-cms
+  namespace: flux-system
+spec:
+  image: registry-hub.homelab.net/homelab-projects/homelab-portal/cms
+  interval: 5m0s
+  secretRef:
+    name: regcred
+
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: homelab-portal-docsearch-scraper
+  namespace: flux-system
+spec:
+  image: registry-hub.homelab.net/homelab-projects/homelab-portal/docsearch-scraper
+  interval: 5m0s
+  secretRef:
+    name: regcred
