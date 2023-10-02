@@ -1,0 +1,52 @@
+version: "3"
+services:
+  kroki:
+    image: yuzutech/kroki
+    restart: unless-stopped
+    depends_on:
+      - blockdiag
+      - mermaid
+      - bpmn
+      - excalidraw
+      - diagramsnet
+      - wireviz
+    environment:
+      - KROKI_BLOCKDIAG_HOST=blockdiag
+      - KROKI_MERMAID_HOST=mermaid
+      - KROKI_BPMN_HOST=bpmn
+      - KROKI_EXCALIDRAW_HOST=excalidraw
+      - KROKI_DIAGRAMSNET_HOST=diagramsnet
+      - KROKI_WIREVIZ_HOST=wireviz
+    ports:
+      - "8000:8000"
+  blockdiag:
+    image: yuzutech/kroki-blockdiag
+    restart: unless-stopped
+    expose:
+      - "8001"
+  mermaid:
+    image: yuzutech/kroki-mermaid
+    restart: unless-stopped
+    expose:
+      - "8002"
+  bpmn:
+    image: yuzutech/kroki-bpmn
+    restart: unless-stopped
+    expose:
+      - "8003"
+  excalidraw:
+    image: yuzutech/kroki-excalidraw
+    restart: unless-stopped
+    expose:
+      - "8004"
+  # experimental!
+  diagramsnet:
+    image: yuzutech/kroki-diagramsnet
+    restart: unless-stopped
+    expose:
+      - "8005"
+  wireviz:
+    image: yuzutech/kroki-wireviz
+    restart: unless-stopped
+    ports:
+      - "8006:8006"

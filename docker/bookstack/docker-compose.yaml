@@ -1,0 +1,19 @@
+version: "2"
+services:
+  bookstack:
+    image: lscr.io/linuxserver/bookstack:latest
+    container_name: bookstack
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - APP_URL=book.homelab.xyz
+      - DB_HOST=database-server.homelab.xyz
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASS=----
+      - DB_DATABASE=bookstack
+    volumes:
+      - /home/svradmin/bookstack:/config
+    ports:
+      - 6875:80
+    restart: unless-stopped

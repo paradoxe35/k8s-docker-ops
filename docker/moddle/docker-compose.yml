@@ -1,0 +1,24 @@
+version: '2'
+services:
+  moodle:
+    image: docker.io/bitnami/moodle:4
+    restart: unless-stopped
+    ports:
+      - '5080:8080'
+      - '5443:8443'
+    environment:
+      - MOODLE_DATABASE_HOST=database-server.homelab.smtf
+      - MOODLE_DATABASE_PORT_NUMBER=3306
+      - MOODLE_DATABASE_USER=root
+      - MOODLE_DATABASE_PASSWORD=
+      - MOODLE_DATABASE_NAME=moodle
+      - ALLOW_EMPTY_PASSWORD=no
+    volumes:
+      - 'moodle_data:/bitnami/moodle'
+      - 'moodledata_data:/bitnami/moodledata'
+      - /var/run/docker.sock:/var/run/docker.sock
+volumes:
+  moodle_data:
+    driver: local
+  moodledata_data:
+    driver: local

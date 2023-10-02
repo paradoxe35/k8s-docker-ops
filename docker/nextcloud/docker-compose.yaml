@@ -1,0 +1,60 @@
+---
+version: "2.1"
+services:
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    container_name: nextcloud
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /home/svradmin/nextcloud/appdata:/config
+      - /home/svradmin/nextcloud/data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8843:443
+    restart: unless-stopped
+
+
+
+# version: "3"
+# services:
+#   nextcloud:
+#     image: lscr.io/linuxserver/nextcloud:latest
+#     container_name: nextcloud
+#     environment:
+#       - PUID=1000
+#       - PGID=1000
+#       - TZ=Etc/UTC
+#     volumes:
+#       - nextcloud_appdata:/config
+#       - nextcloud_data:/data
+#       - /var/run/docker.sock:/var/run/docker.sock
+#     ports:
+#       - 8843:443
+#     restart: unless-stopped
+# volumes:
+#   nextcloud_appdata:
+#   nextcloud_data:
+
+
+# ---
+# version: '3'
+# services:
+#   nextcloud:
+#     image: nextcloud:latest
+#     restart: always
+#     ports:
+#       - 8840:80
+#     volumes:
+#       - /home/portainer/nextcloud:/var/www/html
+#       - /var/run/docker.sock:/var/run/docker.sock
+#     environment:
+#       - MYSQL_PASSWORD=
+#       - MYSQL_DATABASE=nextcloud
+#       - MYSQL_USER=root
+#       - MYSQL_HOST=database-server.homelab.smtf
+#       - NEXTCLOUD_TRUSTED_DOMAINS=drive.homelab.xyz
+#       - REDIS_HOST=database-server.homelab.smtf
+#       - REDIS_HOST_PORT=6379

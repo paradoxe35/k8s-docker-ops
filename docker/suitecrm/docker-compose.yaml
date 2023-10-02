@@ -1,0 +1,28 @@
+version: '2'
+services:
+  suitecrm:
+    image: docker.io/bitnami/suitecrm:8
+    ports:
+      - '2080:8080'
+      - '2443:8443'
+    environment:
+      - SUITECRM_DATABASE_HOST=database-server.homelab.smfl
+      - SUITECRM_DATABASE_PORT_NUMBER=3306
+      - SUITECRM_DATABASE_USER=root
+      - SUITECRM_DATABASE_NAME=suitecrm
+      - SUITECRM_DATABASE_PASSWORD=
+
+      - SUITECRM_ENABLE_HTTPS=no
+      - SUITECRM_EXTERNAL_HTTPS_PORT_NUMBER=2443
+      - SUITECRM_EXTERNAL_HTTP_PORT_NUMBER=2080
+
+      - SUITECRM_USERNAME=root
+      - SUITECRM_PASSWORD=password
+      - SUITECRM_EMAIL=salesforce@homelab.com
+
+      - ALLOW_EMPTY_PASSWORD=no
+    volumes:
+      - '/home/portainer/suitecrm:/bitnami/suitecrm'
+volumes:
+  suitecrm_data:
+    driver: local

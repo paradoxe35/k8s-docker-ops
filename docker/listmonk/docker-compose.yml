@@ -1,0 +1,23 @@
+version: "3.7"
+
+services:
+  listmonk:
+    image: listmonk/listmonk:latest
+    restart: unless-stopped
+    container_name: listmonk_app
+    #command: [sh, -c, "yes | ./listmonk --install"]
+    entrypoint: entrypoint
+    ports:
+      - "3012:9000"
+    environment:
+      TZ: Etc/UTC
+      LISTMONK_db__host: database-server.homelab.smfl
+      LISTMONK_db__database: listmonk
+      LISTMONK_db__user: postgres
+      LISTMONK_db__password: u27x9d9xgyv3ktztk2f
+      LISTMONK_db__ssl_mode: disable
+      LISTMONK_app__admin_username: news@homelab.com
+      LISTMONK_app__admin_password: 
+      LISTMONK_app__address: 0.0.0.0:9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

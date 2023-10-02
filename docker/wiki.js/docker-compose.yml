@@ -1,0 +1,22 @@
+version: "3"
+services:
+  wiki:
+    image: ghcr.io/requarks/wiki:2
+    environment:
+      DB_TYPE: postgres
+      DB_HOST: database-server.homelab.smfl
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASS: ------
+      DB_NAME: wikijs
+    restart: unless-stopped
+    ports:
+      - "3900:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - wiki_assets:/wiki/assets
+      - wiki_data:/wiki/data
+
+volumes:
+  wiki_data: 
+  wiki_assets:

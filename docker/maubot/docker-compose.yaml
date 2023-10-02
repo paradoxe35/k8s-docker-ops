@@ -1,0 +1,9 @@
+version: '3'
+services:
+  maubot:
+    image: dock.mau.dev/maubot/maubot:latest
+    restart: unless-stopped
+    ports:
+      - 29316:29316
+    volumes:
+      - /home/portainer/maubot:/data:z

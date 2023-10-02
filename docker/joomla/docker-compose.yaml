@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+  joomla:
+    image: joomla:latest
+    restart: always
+    ports:
+      - 5880:80
+    environment:
+      JOOMLA_DB_HOST: database-server.homelab.smtf
+      JOOMLA_DB_USER: root
+      JOOMLA_DB_PASSWORD: ----
+      JOOMLA_DB_NAME: joomla

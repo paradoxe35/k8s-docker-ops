@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  matomo-app:
+    image: matomo
+    restart: always
+    volumes:
+      - /home/portainer/matomo/:/var/www/html
+    environment:
+      - MATOMO_DATABASE_HOST=database-server.homelab.smfl
+      - MATOMO_DATABASE_ADAPTER=mysql
+      - MATOMO_DATABASE_TABLES_PREFIX=matomo_
+      - MATOMO_DATABASE_USERNAME=root
+      - MATOMO_DATABASE_PASSWORD=
+      - MATOMO_DATABASE_DBNAME=matomo
+      - MARIADB_AUTO_UPGRADE=1
+      - MARIADB_INITDB_SKIP_TZINFO=1
+    ports:
+      - 8089:80

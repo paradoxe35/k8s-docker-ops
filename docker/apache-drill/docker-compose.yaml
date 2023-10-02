@@ -1,0 +1,14 @@
+version: "3.8" # a more current version
+services:
+  drill:
+    image: apache/drill:latest
+    ports:
+      - "8047:8047"
+      - "31010:31010"
+    stdin_open: true
+    volumes:
+      - big-data-vol:/mnt
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  big-data-vol:

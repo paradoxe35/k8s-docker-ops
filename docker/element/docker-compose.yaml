@@ -1,0 +1,9 @@
+version: '3'
+services:
+  element-web:
+    image: vectorim/element-web
+    ports:
+      - 8054:80
+    restart: unless-stoped
+    volumes:
+      - /home/portainer/element/config.json:/app/config.json

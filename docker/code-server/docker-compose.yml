@@ -1,0 +1,13 @@
+version: "3.3"
+services:
+  code-server:
+    image: "codercom/code-server:latest"
+    container_name: code-server
+    ports:
+      - "3080:8080"
+    volumes:
+      - "/home/portainer/coder:/home/coder"
+    user: "1000"
+    restart: unless-stopped
+    environment:
+      - DOCKER_USER=portainer

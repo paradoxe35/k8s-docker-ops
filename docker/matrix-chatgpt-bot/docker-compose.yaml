@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+  matrix-chatgpt-bot:
+    container_name: matrix-chatgpt-bot 
+    image: ghcr.io/matrixgpt/matrix-chatgpt-bot:latest 
+    volumes:
+      - storage:/storage
+    environment:
+      OPENAI_API_KEY: ""
+      MATRIX_WHITELIST: ""
+      CHATGPT_API_MODEL: ""
+      MATRIX_HOMESERVER_URL: ""
+      MATRIX_BOT_USERNAME: ""
+      # MATRIX_BOT_PASSWORD: ""
+      MATRIX_ACCESS_TOKEN: ""
+
+volumes:
+    storage:

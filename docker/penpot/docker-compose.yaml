@@ -1,0 +1,187 @@
+---
+version: "3.5"
+
+networks:
+  penpot:
+
+volumes:
+  penpot_assets:
+
+services:
+  penpot-frontend:
+    image: "penpotapp/frontend:latest"
+    restart: always
+    ports:
+      - 9011:80
+
+    volumes:
+      - penpot_assets:/opt/data/assets
+
+    depends_on:
+      - penpot-backend
+      - penpot-exporter
+
+    networks:
+      - penpot
+      ## Configuration envronment variables for frontend the container. In this case this
+      ## container only needs the `PENPOT_FLAGS`. This environment variable is shared with
+      ## other services but not all flags are relevant to all services.
+
+    environment:
+      ## Relevant flags for frontend:
+      ## - demo-users
+      ## - login-with-github
+      ## - login-with-gitlab
+      ## - login-with-google
+      ## - login-with-ldap
+      ## - login-with-oidc
+      ## - login-with-password
+      ## - registration
+      ## - webhooks
+      ##
+      ## You can read more about all available flags on:
+      ## https://help.penpot.app/technical-guide/configuration/#advanced-configuration
+
+      PENPOT_FLAGS: "disable-login-with-password disable-registration enable-login-with-ldap enable-webhooks"
+
+  penpot-backend:
+    image: "penpotapp/backend:latest"
+    restart: always
+
+    volumes:
+      - penpot_assets:/opt/data/assets
+
+    depends_on:
+      - penpot-redis
+
+    networks:
+      - penpot
+
+    ## Configuration envronment variables for backend the
+    ## container.
+
+    environment:
+      ## Relevant flags for backend:
+      ## - demo-users
+      ## - email-verification
+      ## - log-emails
+      ## - log-invitation-tokens
+      ## - login-with-github
+      ## - login-with-gitlab
+      ## - login-with-google
+      ## - login-with-ldap
+      ## - login-with-oidc
+      ## - login-with-password
+      ## - registration
+      ## - secure-session-cookies
+      ## - smtp
+      ## - smtp-debug
+      ## - telemetry
+      ## - webhooks
+      ## - prepl-server
+      ##
+      ## You can read more about all available flags and other
+      ## environment variables for the backend here:
+      ## https://help.penpot.app/technical-guide/configuration/#advanced-configuration
+      PENPOT_FLAGS: "disable-registration disable-email-verification disable-login-with-password enable-login-with-ldap enable-prepl-server enable-telemetry enable-secure-session-cookies enable-smtp enable-webhooks"
+
+      ## Penpot SECRET KEY. It serves as a master key from which other keys for subsystems
+      ## (eg http sessions) are derived.
+      ##
+      ## Leave it comment if it is ok for you to have to login again after each backend
+      ## restart.
+      ##
+      ## If you going to uncomment this, we recommend use here a trully randomly generated
+      ## 512 bits base64 encoded string.  You can generate one with:
+      ##
+      ## python3 -c "import secrets; print(secrets.token_urlsafe(64))"
+
+      PENPOT_SECRET_KEY: "PIoNb5Fb54-BId0huRaSXur0g2x-jKUk3fBsynPuBTIzKBQfD6HZ01al32Kd6IlSOc1MLb4TA3I2Y_SeAsXEUw"
+
+      ## The PREPL host. Mainly used for external programatic access to penpot backend
+      ## (example: admin). By default it listen on `localhost` but if you are going to use
+      ## the `admin`, you will need to uncomment this and set the host to `0.0.0.0`.
+
+      # - PENPOT_PREPL_HOST=0.0.0.0
+
+      ## Public URI. If you are going to expose this instance to the internet and use it
+      ## under different domain than 'localhost', you will need to adjust it to the final
+      ## domain.
+      ##
+      ## Consider using traefik and set the 'disable-secure-session-cookies' if you are
+      ## not going to serve penpot under HTTPS.
+
+      PENPOT_PUBLIC_URI: "https://ui.homelab.xyz"
+
+      ## Database connection parameters. Don't touch them unless you are using custom
+      ## postgresql connection parameters.
+
+      PENPOT_DATABASE_URI: "postgresql://database-server.homelab.smtf/penpot"
+      PENPOT_DATABASE_USERNAME: postgres
+      PENPOT_DATABASE_PASSWORD: "--------------"
+
+      ## Redis is used for the websockets notifications. Don't touch unless the redis
+      ## container has different parameters or different name.
+
+      PENPOT_REDIS_URI: redis://penpot-redis/0
+
+      ## Default configuration for assets storage: using filesystem based with all files
+      ## stored in a docker volume.
+
+      PENPOT_ASSETS_STORAGE_BACKEND: assets-fs
+      PENPOT_STORAGE_ASSETS_FS_DIRECTORY: /opt/data/assets
+
+      ## Telemetry. When enabled, a periodical process will send anonymous data about this
+      ## instance. Telemetry data will enable us to learn on how the application is used,
+      ## based on real scenarios. If you want to help us, please leave it enabled. You can
+      ## audit what data we send with the code available on github
+
+      PENPOT_TELEMETRY_ENABLED: true
+
+      ## Example SMTP/Email configuration. By default, emails are sent to the mailcatch
+      ## service, but for production usage is recommended to setup a real SMTP
+      ## provider. Emails are used to confirm user registrations & invitations. Look below
+      ## how mailcatch service is configured.
+
+      PENPOT_SMTP_DEFAULT_FROM: penpot@homelab.com
+      PENPOT_SMTP_DEFAULT_REPLY_TO: penpot@homelab.com
+      PENPOT_SMTP_HOST: mail.homelab.net
+      PENPOT_SMTP_PORT: 587
+      PENPOT_SMTP_USERNAME: penpot@homelab.com
+      PENPOT_SMTP_PASSWORD: -------------
+      PENPOT_SMTP_TLS: true
+      PENPOT_SMTP_SSL: false
+
+      ## LDAP
+      PENPOT_LDAP_HOST: ipa.homelab.net
+      PENPOT_LDAP_PORT: 389
+      PENPOT_LDAP_SSL: false
+      PENPOT_LDAP_STARTTLS: true
+      PENPOT_LDAP_BASE_DN: cn=users,cn=accounts,dc=homelab,dc=com
+      PENPOT_LDAP_BIND_DN: uid=admin,cn=users,cn=accounts,dc=homelab,dc=com
+      PENPOT_LDAP_BIND_PASSWORD: -----------
+      #- PENPOT_LDAP_USER_QUERY=(|(uid=:username)(mail=:username))
+      PENPOT_LDAP_USER_QUERY: (&(|(uid=:username)(mail=:username))(memberOf=cn=ipausers,cn=groups,cn=accounts,dc=homelab,dc=com))
+      PENPOT_LDAP_ATTRS_USERNAME: uid
+      PENPOT_LDAP_ATTRS_EMAIL: mail
+      PENPOT_LDAP_ATTRS_FULLNAME: cn
+      PENPOT_LDAP_ATTRS_PHOTO: jpegPhoto
+
+  penpot-exporter:
+    image: "penpotapp/exporter:latest"
+    restart: always
+    networks:
+      - penpot
+    environment:
+      # Don't touch it; this uses internal docker network to
+      # communicate with the frontend.
+      PENPOT_PUBLIC_URI: http://penpot-frontend
+
+      ## Redis is used for the websockets notifications.
+      PENPOT_REDIS_URI: redis://penpot-redis/0
+
+  penpot-redis:
+    image: redis:7
+    restart: always
+    networks:
+      - penpot

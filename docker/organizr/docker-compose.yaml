@@ -1,0 +1,15 @@
+version: "3.6"
+services:
+  organizr:
+    container_name: organizr
+    hostname: organizr
+    image: organizr/organizr:latest
+    restart: unless-stopped
+    ports:
+      - 8044:80
+    volumes:
+      - /home/svradmin/organizr:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Africa/Kigali

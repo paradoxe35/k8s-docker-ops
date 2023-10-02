@@ -1,0 +1,19 @@
+version: '3.3'
+services:
+    zeppelin:
+        user: "root"
+        ports:
+            - '8080:8080'
+        volumes:
+            - '/home/ubuntu/logs:/logs'
+            - '/home/ubuntu/notebook:/notebook'
+            - '/home/ubuntu/conf/shiro.ini:/opt/zeppelin/conf/shiro.ini'
+            - '/usr/lib/spark-2.4.7:/opt/spark'
+            - '/usr/lib/flink-1.12.2:/opt/flink'
+        environment:
+            - FLINK_HOME=/opt/flink
+            - SPARK_HOME=/opt/spark
+            - ZEPPELIN_LOG_DIR=/logs
+            - ZEPPELIN_NOTEBOOK_DIR=/notebook
+        container_name: zeppelin
+        image: 'apache/zeppelin:0.10.1'
