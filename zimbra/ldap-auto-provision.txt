@@ -1,0 +1,24 @@
+md homelab.com zimbraAutoProvAccountNameMap "uid"
+md homelab.com +zimbraAutoProvAttrMap "displayName=Name"
+md homelab.com zimbraAutoProvAttrMap "cn=cn"
+md homelab.com +zimbraAutoProvAttrMap "givenName=givenName"
+md homelab.com +zimbraAutoProvAttrMap "sn=sn"
+md homelab.com +zimbraAutoProvAttrMap "description=description"
+md homelab.com zimbraAutoProvAuthMech "LDAP"
+md homelab.com zimbraAutoProvBatchSize 50
+
+md homelab.com zimbraAutoProvLdapAdminBindDn "uid=admin,cn=users,cn=accounts,dc=homelab,dc=com"
+md homelab.com zimbraAutoProvLdapAdminBindPassword "----------------"
+md homelab.com zimbraAutoProvLdapBindDn "uid=admin,cn=users,cn=accounts,dc=homelab,dc=com"
+md homelab.com zimbraAutoProvLdapSearchBase "cn=users,cn=accounts,dc=homelab,dc=com"
+md homelab.com zimbraAutoProvLdapSearchFilter "(uid=%u)"
+md homelab.com zimbraAutoProvLdapURL "ldap://ipa.homelab.net:389"
+md homelab.com zimbraAutoProvMode "EAGER"
+md homelab.com zimbraAutoProvNotificationBody "Your account has been auto provisioned. Your email address is ${ACCOUNT_ADDRESS}."
+md homelab.com zimbraAutoProvNotificationFromAddress "admin@homelab.com"
+md homelab.com zimbraAutoProvNotificationSubject "New account auto provisioned"
+
+ms mail.homelab.net zimbraAutoProvPollingInterval "1m"
+ms mail.homelab.net +zimbraAutoProvScheduledDomains "homelab.com"
+
+md homelab.com zimbraAutoProvLastPolledTimestamp ""
