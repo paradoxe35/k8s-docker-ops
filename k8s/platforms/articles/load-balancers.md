@@ -1,0 +1,4 @@
+- https://blog.opstree.com/2020/10/13/kubernetes-diary-software-loadbalancer/
+- https://kube-vip.io/
+- https://metallb.universe.tf/
+- https://github.com/kubesphere/porter

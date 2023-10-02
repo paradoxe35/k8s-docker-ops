@@ -1,0 +1,197 @@
+service:
+  type: LoadBalancer
+  nodePort:
+    http: null
+
+supersetNode:
+  replicaCount: 1
+  connections:
+    db_host: "database-server.homelab.smfl"
+    db_port: "5432"
+    db_user: postgres
+    db_pass: ----
+    db_name: superset
+
+init:
+  adminUser:
+    username: admin
+    firstname: Superset
+    lastname: Admin
+    email: admin@homelab.com
+    password: -----
+
+postgresql:
+  enabled: false
+
+supersetCeleryBeat:
+  enabled: true
+
+bootstrapScript: |
+  #!/bin/bash
+  apt update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    build-essential python3-dev \
+    libldap2-dev libsasl2-dev \
+    slapd ldap-utils tox lcov valgrind && \
+  rm -rf /var/lib/apt/lists/* && \
+  pip install \
+    psycopg2-binary==2.9.1 \
+    redis==3.5.3 \
+    python-ldap==3.4.3 && \
+  if [ ! -f ~/bootstrap ]; then echo "Running Superset with uid {{ .Values.runAsUser }}" > ~/bootstrap; fi
+
+supersetWorker:
+  command:
+    - /bin/sh
+    - -c
+    - |
+      # Install chrome webdriver
+      # See https://github.com/apache/superset/blob/4fa3b6c7185629b87c27fc2c0e5435d458f7b73d/docs/src/pages/docs/installation/email_reports.mdx
+      apt update
+      wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+      apt install -y --no-install-recommends ./google-chrome-stable_current_amd64.deb
+      wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip
+      unzip chromedriver_linux64.zip
+      chmod +x chromedriver
+      mv chromedriver /usr/bin
+      apt autoremove -yqq --purge
+      apt clean
+      rm -f google-chrome-stable_current_amd64.deb chromedriver_linux64.zip
+
+      # Run
+      . {{ .Values.configMountPath }}/superset_bootstrap.sh; celery --app=superset.tasks.celery_app:app worker
+
+extraEnv:
+  SMTP_HOST: mail.homelab.net
+  SMTP_USER: superset@homelab.com
+  SMTP_PORT: "587"
+  SMTP_MAIL_FROM: superset@homelab.com
+  # LDAP Config
+  AUTH_TYPE: 2
+  AUTH_USER_REGISTRATION: "True"
+  AUTH_USER_REGISTRATION_ROLE: "Public"
+  AUTH_LDAP_USE_TLS: "False"
+  AUTH_LDAP_SERVER: ldap://ipa-server.homelab.smfl
+  AUTH_LDAP_SEARCH: cn=users,cn=accounts,dc=homelab,dc=com
+  AUTH_LDAP_USERNAME_FORMAT: uid=%s,cn=users,cn=accounts,dc=homelab,dc=com
+  AUTH_LDAP_GROUP_FIELD: memberOf
+  AUTH_LDAP_UID_FIELD: uid
+  AUTH_LDAP_FIRSTNAME_FIELD: givenName
+  AUTH_LDAP_LASTNAME_FIELD: sn
+  AUTH_LDAP_EMAIL_FIELD: mail
+
+extraSecretEnv:
+  SMTP_PASSWORD: ----
+
+configOverrides:
+  ldap: |
+    import ast
+    from flask_appbuilder.security.manager import AUTH_LDAP
+
+    # Map Authlib roles to superset roles
+    AUTH_ROLE_ADMIN = 'Admin'
+    AUTH_ROLE_PUBLIC = 'Public'
+    # if we should replace ALL the user's roles each login, or only on registration
+    AUTH_ROLES_SYNC_AT_LOGIN = True
+
+    authtype = ast.literal_eval(os.getenv("AUTH_TYPE", 1))
+    AUTH_TYPE = AUTH_LDAP if authtype == 2 else authtype
+
+    AUTH_LDAP_SERVER = os.getenv("AUTH_LDAP_SERVER", None)
+    AUTH_LDAP_USE_TLS = ast.literal_eval(os.getenv("AUTH_LDAP_USE_TLS", "False"))
+
+    # registration configs
+    AUTH_USER_REGISTRATION = ast.literal_eval(os.getenv("AUTH_USER_REGISTRATION", "False"))
+    AUTH_USER_REGISTRATION_ROLE = os.getenv("AUTH_USER_REGISTRATION_ROLE", "Public")
+    AUTH_LDAP_UID_FIELD = os.getenv("AUTH_LDAP_UID_FIELD", "uid")
+    AUTH_LDAP_FIRSTNAME_FIELD = os.getenv("AUTH_LDAP_FIRSTNAME_FIELD", "givenName")
+    AUTH_LDAP_LASTNAME_FIELD = os.getenv("AUTH_LDAP_LASTNAME_FIELD", "sn")
+    AUTH_LDAP_EMAIL_FIELD = os.getenv("AUTH_LDAP_EMAIL_FIELD", "mail")
+
+
+    # bind username (for password validation)
+    AUTH_LDAP_SEARCH = os.getenv("AUTH_LDAP_SEARCH", None)
+    AUTH_LDAP_USERNAME_FORMAT = os.getenv("AUTH_LDAP_USERNAME_FORMAT", None)
+
+    # the LDAP user attribute which has their role DNs
+    AUTH_LDAP_GROUP_FIELD = os.getenv("AUTH_LDAP_GROUP_FIELD", "memberOf")
+
+    # force users to re-auth after 30min of inactivity (to keep roles in sync)
+    # PERMANENT_SESSION_LIFETIME = 1800
+
+    # a mapping from LDAP DN to a list of FAB roles
+    AUTH_ROLES_MAPPING = {
+        "cn=sysadmins,cn=groups,cn=accounts,dc=homelab,dc=com": ["Admin"],
+    }
+
+  feature_flags: |
+    import ast
+
+    FEATURE_FLAGS = {
+        "ALERT_REPORTS": True
+    }
+
+    SMTP_HOST = os.getenv("SMTP_HOST","localhost")
+    SMTP_STARTTLS = ast.literal_eval(os.getenv("SMTP_STARTTLS", "True"))
+    SMTP_SSL = ast.literal_eval(os.getenv("SMTP_SSL", "False"))
+    SMTP_USER = os.getenv("SMTP_USER","superset")
+    SMTP_PORT = os.getenv("SMTP_PORT",25)
+    SMTP_PASSWORD = os.getenv("SMTP_PASSWORD","superset")
+    SMTP_MAIL_FROM = os.getenv("SMTP_MAIL_FROM","superset@superset.com")
+
+    SLACK_API_TOKEN = os.getenv("SLACK_API_TOKEN",None)
+  celery_conf: |
+    from celery.schedules import crontab
+
+    class CeleryConfig(object):
+      broker_url = f"redis://{env('REDIS_HOST')}:{env('REDIS_PORT')}/0"
+      imports = ('superset.sql_lab', "superset.tasks", "superset.tasks.thumbnails", )
+      result_backend = f"redis://{env('REDIS_HOST')}:{env('REDIS_PORT')}/0"
+      task_annotations = {
+          'sql_lab.get_sql_results': {
+              'rate_limit': '100/s',
+          },
+          'email_reports.send': {
+              'rate_limit': '1/s',
+              'time_limit': 600,
+              'soft_time_limit': 600,
+              'ignore_result': True,
+          },
+      }
+      beat_schedule = {
+          'reports.scheduler': {
+              'task': 'reports.scheduler',
+              'schedule': crontab(minute='*', hour='*'),
+          },
+          'reports.prune_log': {
+              'task': 'reports.prune_log',
+              'schedule': crontab(minute=0, hour=0),
+          },
+          'cache-warmup-hourly': {
+              'task': 'cache-warmup',
+              'schedule': crontab(minute='*/30', hour='*'),
+              'kwargs': {
+                  'strategy_name': 'top_n_dashboards',
+                  'top_n': 10,
+                  'since': '7 days ago',
+              },
+          }
+      }
+
+    CELERY_CONFIG = CeleryConfig
+  reports: |
+    EMAIL_PAGE_RENDER_WAIT = 60
+    WEBDRIVER_BASEURL = "http://{{ template "superset.fullname" . }}:{{ .Values.service.port }}/"
+    WEBDRIVER_BASEURL_USER_FRIENDLY = "https://www.example.com/"
+    WEBDRIVER_TYPE= "chrome"
+    WEBDRIVER_OPTION_ARGS = [
+        "--force-device-scale-factor=2.0",
+        "--high-dpi-support=2.0",
+        "--headless",
+        "--disable-gpu",
+        "--disable-dev-shm-usage",
+        # This is required because our process runs as root (in order to install pip packages)
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-extensions",
+    ]

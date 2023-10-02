@@ -1,0 +1,30 @@
+apiVersion: metallb.io/v1beta2
+kind: BGPPeer
+metadata:
+  name: metallb-l-bgp-peer
+  namespace: metallb-system
+spec:
+  myASN: 64500
+  peerASN: 64501
+  peerAddress: 10.178.35.1
+
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: metallb-l-first-pool
+  namespace: metallb-system
+spec:
+  addresses:
+    - 10.178.36.0/24
+  avoidBuggyIPs: true
+
+---
+apiVersion: metallb.io/v1beta1
+kind: BGPAdvertisement
+metadata:
+  name: metallb-l-bgp-advertisement
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - metallb-l-first-pool

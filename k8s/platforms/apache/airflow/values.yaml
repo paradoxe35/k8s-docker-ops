@@ -1,0 +1,147 @@
+webserver:
+  defaultUser:
+    enabled: true
+    role: Admin
+    username: admin
+    email: admin@homelab.com
+    firstName: admin
+    lastName: user
+    password: --------
+
+  service:
+    type: LoadBalancer
+
+  env:
+    - name: "SMTP_HOST"
+      value: "mail.homelab.net"
+
+    - name: "SMTP_USER"
+      value: "airflow@homelab.com"
+
+    - name: "SMTP_PORT"
+      value: "587"
+
+    - name: "SMTP_MAIL_FROM"
+      value: "superset@homelab.com"
+
+    - name: "SMTP_PASSWORD"
+      value: "--------"
+
+    # LDAP Config
+    - name: "AUTH_TYPE"
+      value: "2"
+
+    - name: "AUTH_USER_REGISTRATION"
+      value: "True"
+
+    - name: "AUTH_USER_REGISTRATION_ROLE"
+      value: "Public"
+
+    - name: "AUTH_LDAP_USE_TLS"
+      value: "False"
+
+    - name: "AUTH_LDAP_SERVER"
+      value: "ldap://ipa-server.homelab.smfl"
+
+    - name: "AUTH_LDAP_SEARCH"
+      value: "cn=users,cn=accounts,dc=homelab,dc=com"
+
+    - name: "AUTH_LDAP_USERNAME_FORMAT"
+      value: "uid=%s,cn=users,cn=accounts,dc=homelab,dc=com"
+
+    - name: "AUTH_LDAP_GROUP_FIELD"
+      value: "memberOf"
+
+    - name: "AUTH_LDAP_UID_FIELD"
+      value: "uid"
+
+    - name: "AUTH_LDAP_FIRSTNAME_FIELD"
+      value: "givenName"
+
+    - name: "AUTH_LDAP_LASTNAME_FIELD"
+      value: "sn"
+
+    - name: "AUTH_LDAP_EMAIL_FIELD"
+      value: "mail"
+
+  webserverConfig: |
+    from __future__ import annotations
+    import os
+    import ast
+    from airflow.www.fab_security.manager import AUTH_LDAP
+
+    basedir = os.path.abspath(os.path.dirname(__file__))
+
+    # Flask-WTF flag for CSRF
+    WTF_CSRF_ENABLED = True
+    WTF_CSRF_TIME_LIMIT = None
+
+
+    # Map Authlib roles to superset roles
+    AUTH_ROLE_ADMIN = 'Admin'
+    AUTH_ROLE_PUBLIC = 'Public'
+    # if we should replace ALL the user's roles each login, or only on registration
+    AUTH_ROLES_SYNC_AT_LOGIN = True
+
+    authtype = ast.literal_eval(os.getenv("AUTH_TYPE", 1))
+    AUTH_TYPE = AUTH_LDAP if authtype == 2 else authtype
+
+    AUTH_LDAP_SERVER = os.getenv("AUTH_LDAP_SERVER", None)
+    AUTH_LDAP_USE_TLS = ast.literal_eval(os.getenv("AUTH_LDAP_USE_TLS", "False"))
+
+    # registration configs
+    AUTH_USER_REGISTRATION = ast.literal_eval(os.getenv("AUTH_USER_REGISTRATION", "False"))
+    AUTH_USER_REGISTRATION_ROLE = os.getenv("AUTH_USER_REGISTRATION_ROLE", "Public")
+    AUTH_LDAP_UID_FIELD = os.getenv("AUTH_LDAP_UID_FIELD", "uid")
+    AUTH_LDAP_FIRSTNAME_FIELD = os.getenv("AUTH_LDAP_FIRSTNAME_FIELD", "givenName")
+    AUTH_LDAP_LASTNAME_FIELD = os.getenv("AUTH_LDAP_LASTNAME_FIELD", "sn")
+    AUTH_LDAP_EMAIL_FIELD = os.getenv("AUTH_LDAP_EMAIL_FIELD", "mail")
+
+
+    # bind username (for password validation)
+    AUTH_LDAP_SEARCH = os.getenv("AUTH_LDAP_SEARCH", None)
+    AUTH_LDAP_USERNAME_FORMAT = os.getenv("AUTH_LDAP_USERNAME_FORMAT", None)
+
+    # the LDAP user attribute which has their role DNs
+    AUTH_LDAP_GROUP_FIELD = os.getenv("AUTH_LDAP_GROUP_FIELD", "memberOf")
+
+    # force users to re-auth after 30min of inactivity (to keep roles in sync)
+    # PERMANENT_SESSION_LIFETIME = 1800
+
+    # a mapping from LDAP DN to a list of FAB roles
+    AUTH_ROLES_MAPPING = {
+        "cn=sysadmins,cn=groups,cn=accounts,dc=homelab,dc=com": ["Admin"],
+    }
+
+    # ###############################################
+    #                   Mail config                 #
+    # ###############################################
+    FEATURE_FLAGS = {
+        "ALERT_REPORTS": True
+    }
+
+    SMTP_HOST = os.getenv("SMTP_HOST","localhost")
+    SMTP_STARTTLS = ast.literal_eval(os.getenv("SMTP_STARTTLS", "True"))
+    SMTP_SSL = ast.literal_eval(os.getenv("SMTP_SSL", "False"))
+    SMTP_USER = os.getenv("SMTP_USER","superset")
+    SMTP_PORT = os.getenv("SMTP_PORT",25)
+    SMTP_PASSWORD = os.getenv("SMTP_PASSWORD","superset")
+    SMTP_MAIL_FROM = os.getenv("SMTP_MAIL_FROM","superset@superset.com")
+
+data:
+  metadataConnection:
+    user: postgres
+    pass: --------
+    protocol: postgresql
+    host: database-server.homelab.smfl
+    port: 5432
+    db: airflow
+    sslmode: disable
+
+postgresql:
+  enabled: false
+
+pgbouncer:
+  enabled: true
+
+webserverSecretKey: --------

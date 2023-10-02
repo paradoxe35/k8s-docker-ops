@@ -1,0 +1,10 @@
+cluster:
+  minimumAvailable: 2
+  seedCount: 2
+dbUser:
+  password: -----
+  user: "admin"
+replicaCount: 3
+
+service:
+  type: LoadBalancer

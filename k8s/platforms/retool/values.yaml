@@ -1,0 +1,117 @@
+backend:
+  annotations: {}
+  labels: {}
+commandline:
+  args: []
+config:
+  auth:
+    google:
+      clientId:
+      clientSecret:
+      domain:
+  encryptionKey: "-----------"
+  jwtSecret: "-------------"
+  licenseKey: "-------------"
+  postgresql: {}
+  useInsecureCookies: false
+deployment:
+  annotations: {}
+env: {}
+environmentSecrets: []
+environmentVariables: []
+externalSecrets:
+  enabled: false
+  externalSecretsOperator:
+    backendType: "secretsManager"
+    enabled: false
+    secretRef: []
+  name: "retool-config"
+extraConfigMapMounts: []
+extraContainers: []
+extraManifests: []
+extraVolumeMounts: []
+extraVolumes: []
+files: {}
+image:
+  pullPolicy: "IfNotPresent"
+  repository: "tryretool/backend"
+  tag: "2.110.5"
+ingress:
+  annotations: {}
+  enabled: false
+  hosts:
+  labels: {}
+  pathType: "ImplementationSpecific"
+  tls:
+initContainers: {}
+jobRunner:
+  annotations: {}
+  labels: {}
+livenessProbe:
+  enabled: true
+  failureThreshold: 3
+  initialDelaySeconds: 30
+  path: "/api/checkHealth"
+  timeoutSeconds: 10
+nodeSelector: {}
+persistentVolumeClaim:
+  accessModes:
+    - "ReadWriteOnce"
+  annotations: {}
+  enabled: false
+  existingClaim: false
+  size: "15Gi"
+podAnnotations: {}
+podLabels: {}
+postgresql:
+  enabled: true
+  image:
+    repository: "postgres"
+    tag: "10.6"
+  persistence:
+    enabled: true
+    mountPath: "/data/"
+  postgresqlDataDir: "/data/pgdata"
+  postgresqlDatabase: "hammerhead_production"
+  postgresqlPassword: "retool"
+  postgresqlUsername: "retool"
+  service:
+    port: 5432
+  ssl_enabled: false
+priorityClassName: ""
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 30
+  path: "/api/checkHealth"
+  periodSeconds: 10
+  successThreshold: 5
+  timeoutSeconds: 10
+replicaCount: 2
+resources:
+  limits:
+    cpu: "4096m"
+    memory: "8192Mi"
+  requests:
+    cpu: "2048m"
+    memory: "4096Mi"
+revisionHistoryLimit: 3
+securityContext:
+  allowPrivilegeEscalation: false
+  enabled: false
+  fsGroup: 2000
+  runAsUser: 1000
+securityGroupPolicy:
+  enabled: false
+  groupIds: []
+service:
+  annotations: {}
+  externalPort: 3000
+  internalPort: 3000
+  labels: {}
+  selector: {}
+  type: "LoadBalancer"
+serviceAccount:
+  annotations: {}
+  create: true
+  name:
+tolerations: []

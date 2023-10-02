@@ -1,0 +1,1 @@
+curl --insecure -sfL https://portainer-server.homelab.smfl:4443/v3/import/k8htwzdhj47nl6nds6rrxp92pl6gpr5b97lfw7vclbp48wx9m879hz_c-m-rpc9xskv.yaml | kubectl apply -f -

@@ -1,0 +1,4 @@
+- https://blog.xirion.net/posts/metallb-opnsense/
+- https://blog.perf3ct.tech/setting-up-metallb-in-bgp-mode-with-pfsense/
+- https://www.fullstaq.com/knowledge-hub/blogs/setting-up-your-own-k3s-home-cluster
+- https://metallb.universe.tf/installation/
