@@ -1,0 +1,170 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/en/configs/services
+
+- Servers:
+    - Proxmox:
+        href: https://datacenter.homelab.net:8006/
+        icon: proxmox.png
+        description: Proxmox Virtual Environment is a hyper-converged infrastructure open-source software.
+
+    - Portainer:
+        href: https://portainer.homelab.net/
+        icon: portainer.png
+        description: hybrid & multi-cloud container management platform supports Kubernetes, Docker, Swarm in any Data Center, Cloud, Network Edge or IIoT Device.
+
+- Tools:
+    - Teleport:
+        href: https://teleport.homelab.net/
+        icon: teleport.png
+        description: Providing zero trust access to servers and cloud applications using SSH, Kubernetes and HTTPS
+
+    - Passbolt:
+        # href: https://vault.homelab.net/
+        icon: /icons/passbolt.png
+        description: Open source password manager for teams.
+
+    - ToolJet:
+        href: https://tooljet.homelab.net/
+        icon: tooljet.png
+        description: Low-code framework to build and deploy internal tools quickly with minimal engineering effort.
+
+- Security:
+    - Authentik:
+        href: https://sso.homelab.net/
+        icon: authentik.png
+        description: Open-source Identity Provider focused on flexibility and versatility.
+
+    - FreeIPA:
+        href: https://ipa.homelab.net/
+        icon: freeipa.png
+        description: Free and open source identity management system.
+
+- Developers:
+    - Gitlab:
+        href: https://hub.homelab.net/
+        icon: gitlab.png
+        description: open-core company that operates GitLab, a DevOps software package which can develop, secure, and operate software.
+
+    - VScode:
+        href: https://code.homelab.net/
+        icon: vscode.png
+        description: Streamlined code editor with support for development operations like debugging, task running, and version control.
+
+- Network:
+    - OPNsense:
+        href: https://gateway.homelab.net/
+        icon: pfsense.png
+        description: FreeBSD-based firewall and routing software.
+
+    - Nginx ProxyManager:
+        href: https://proxymanager.homelab.net/
+        icon: nginxproxymanager.png
+        description: Expose your services easily and securely
+
+    - Wireguard:
+        href: https://vpn.homelab.net/
+        icon: /icons/wireguard.png
+        description: Communication protocol and free and open-source software that implements encrypted virtual private networks.
+
+    - Pi-Hole:
+        href: https://pihole.homelab.net/
+        icon: pihole.png
+        description: Linux network-level advertisement and Internet tracker blocking application which acts as a DNS sinkhole and optionally a DHCP server, intended for use on a private network.
+
+- Integrations:
+    - Chatwoot:
+        href: https://chatwoot.homelab.net/
+        icon: /icons/chatwoot.png
+        description: Open-source as well as cloud-based customer engagement platform. Manage all of your customer conversation channels from one place.
+
+    - Listmonk:
+        href: https://news.homelab.net/
+        icon: listmonk.png
+        description: High performance, self-hosted, newsletter and mailing list manager with a modern dashboard.
+
+    - Matomo:
+        href: https://webanalyzer.homelab.net/
+        icon: matomo.png
+        description: Open source web analytics application to track online visits to one or more websites and display reports on these visits for analysis.
+
+- Applications:
+    - Taiga:
+        href: https://progile.homelab.net/
+        icon: taiga.png
+        description: Your Agile, Free and Open Source Project Management Tool
+
+    - Odoo:
+        href: https://erp.homelab.net/
+        icon: /icons/odoo.png
+        description: A suite of business management software tools including, for example, CRM, e-commerce, billing, accounting, manufacturing, warehouse, project management, and inventory management.
+
+    - SuiteCRM:
+        href: https://salesforce.homelab.net/
+        icon: /icons/suitecrm.png
+        description: Open-source Customer Relationship Management application.
+
+- Collaboration:
+    - WikiJS:
+        href: https://wikijs.homelab.net/
+        icon: /icons/wikijs.png
+        description: The most powerful and extensible open source Wiki software.
+    - NextCloud:
+        href: https://drive.homelab.net/
+        icon: nextcloud.png
+        description: creating and using file hosting services.
+    - Zimbra:
+        href: https://mail.homelab.net/
+        icon: /icons/zimbra.png
+        description: Client software for messaging and collaboration.
+    - Jitsi Meet:
+        href: https://meetroom.homelab.net/
+        icon: jitsimeet.png
+        description: Secure, Simple and Scalable Video Conferences
+    - Xwiki:
+        # href: https://wiki.homelab.net/
+        icon: /icons/xwiki.png
+        description: Free wiki software platform written in Java with a design emphasis on extensibility.
+
+- Kubernetes:
+    - Rancher:
+        href: https://rancher.homelab.net/
+        icon: rancher.png
+        description: Complete container management platform for kubernetes
+    - Kubeapps:
+        href: https://kubeapps.homelab.net/
+        icon: /icons/kubeapps.svg
+        description: A web-based UI for deploying and managing applications in Kubernetes clusters
+
+- Monitoring and Visualization:
+    - Uptime Kuma:
+        href: https://uptime.homelab.net/
+        icon: uptime-kuma.png
+        description: A self-hosted monitoring tool.
+
+    - Grafana:
+        href: https://grafana.homelab.net/
+        icon: grafana.png
+        description: Open source analytics & monitoring solution for every database.
+
+- Data Flow:
+    - Apache Superset:
+        href: https://bi.homelab.net/
+        icon: /icons/superset.png
+        description: Data Visualization and Data Exploration Platform.
+
+    - Apache Airflow:
+        href: https://workflow.homelab.net/
+        icon: /icons/airflow.png
+        description: Programmatically author, schedule and monitor workflows.
+
+    - Apache Drill:
+        href: https://drill.homelab.net/
+        icon: /icons/apache-drill.png
+        description: Data-intensive distributed applications for interactive analysis of large-scale datasets.
+
+- Lab:
+    - Zeppelin:
+        href: https://lab.homelab.net/
+        icon: /icons/zeppelin.png
+        description: multi-purposed web-based notebook which brings data ingestion, data exploration, visualization, sharing and collaboration features to Hadoop and Spark.
