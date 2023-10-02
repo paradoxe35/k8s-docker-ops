@@ -1,0 +1,13 @@
+database:
+  name: "psycopg2"
+  args:
+    user: "synapse_user"
+    password: "---------"
+    database: "synapse"
+    host: "database-server.homelab.smfl"
+    cp_min: 5
+    cp_max: 10
+#database:
+#  name: sqlite3
+#  args:
+#    database: /var/lib/matrix-synapse/homeserver.db

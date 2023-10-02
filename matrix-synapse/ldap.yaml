@@ -1,0 +1,27 @@
+modules:
+ - module: "ldap_auth_provider.LdapAuthProviderModule"
+   config:
+     enabled: true
+     uri: "ldap://ipa-server.homelab.smfl:389"
+     start_tls: false
+     mode: "search"
+     base: "cn=users,cn=accounts,dc=homelab,dc=com"
+     attributes:
+        uid: "uid"
+        mail: "mail"
+        name: "cn"
+     bind_dn: "uid=admin,cn=users,cn=accounts,dc=homelab,dc=com"
+     bind_password: "------------"
+     filter: "(objectClass=inetorgperson)"
+     # Additional options for TLS, can be any key from https://ldap3.readthedocs.io/en/latest/ssltls.html#the-tls-object
+     #tls_options:
+     #  validate: true
+     #  local_certificate_file: foo.crt
+     #  local_private_key_file: bar.pem
+     #  local_private_key_password: secret
+
+loggers:
+   ldap3:
+     level: DEBUG
+   ldap_auth_provider:
+     level: DEBUG

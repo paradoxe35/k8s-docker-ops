@@ -1,0 +1,11 @@
+enable_registration: false
+registration_shared_secret: "AefeebeipeebooxiegieF8phohJ9sh"
+listeners:
+  - port: 8008
+    tls: false
+    type: http
+    x_forwarded: true
+    bind_addresses: ["0.0.0.0"]
+    resources:
+      - names: [client, federation]
+        compress: false
